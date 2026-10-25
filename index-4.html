@@ -1,0 +1,3568 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة SABIQ التعليمية</title>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {
+    getDatabase, ref, set, get, update, onValue, push, remove
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyA64OjXPMFr1WFPEAoRyb57Y6RWFIax93M",
+    authDomain: "sabiq-by-alanoud.firebaseapp.com",
+    databaseURL: "https://sabiq-by-alanoud-default-rtdb.firebaseio.com",
+    projectId: "sabiq-by-alanoud",
+    storageBucket: "sabiq-by-alanoud.firebasestorage.app",
+    messagingSenderId: "123201287064",
+    appId: "1:123201287064:web:44a9dbc302c13425a1b1ed"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.db = db;
+window.ref = ref;
+window.set = set;
+window.get = get;
+window.update = update;
+window.onValue = onValue;
+window.push = push;
+window.remove = remove;
+window.firebaseReady = true;
+</script>
+
+<style>
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background-color:#fcfdf6;
+    margin:0;
+    padding:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    overflow-y:auto;
+    position:relative;
+}
+.global-credits-bar{
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#000;
+    font-size:13px;
+    font-weight:bold;
+    z-index:999;
+    pointer-events:none;
+    text-align:center;
+}
+.bg-circle{
+    position:absolute;
+    background-color:#a5f3fc;
+    border-radius:50%;
+    opacity:.6;
+    z-index:0;
+    animation:floatCircle 6s ease-in-out infinite alternate;
+}
+.circle-1{width:140px;height:140px;top:-30px;right:-30px;animation-duration:5s}
+.circle-2{width:170px;height:170px;bottom:-40px;left:-40px;animation-duration:7s}
+.circle-3{width:110px;height:110px;top:45%;left:15px;animation-duration:6s}
+@keyframes floatCircle{
+    0%{transform:translateY(0) scale(1) rotate(0)}
+    100%{transform:translateY(25px) scale(1.1) rotate(10deg)}
+}
+.screen{
+    display:none;
+    width:100%;
+    max-width:450px;
+    min-height:100vh;
+    background-color:#fcfdf6;
+    padding:25px 20px 40px;
+    box-sizing:border-box;
+    position:relative;
+    z-index:1;
+    flex-direction:column;
+    align-items:center;
+}
+.screen.active{display:flex}
+#screen-splash{
+    background-color:#fef08a;
+    justify-content:center;
+    align-items:center;
+    max-width:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100vh;
+    z-index:10;
+}
+.sabiq-logo{
+    background-color:#3b82f6;
+    color:#fff;
+    font-size:52px;
+    font-weight:900;
+    padding:15px 40px;
+    border-radius:20px;
+    box-shadow:0 6px 0 #1d4ed8;
+    letter-spacing:3px;
+    animation:sabiqPulse .8s ease-in-out infinite alternate;
+}
+@keyframes sabiqPulse{
+    0%{transform:scale(1);box-shadow:0 4px 0 #1d4ed8}
+    100%{transform:scale(1.12);box-shadow:0 10px 0 #1d4ed8}
+}
+.yellow-card{
+    background-color:#fef08a;
+    width:100%;
+    border-radius:30px;
+    padding:30px 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    box-sizing:border-box;
+    margin-top:30px;
+    box-shadow:0 4px 10px rgba(0,0,0,.03);
+}
+.screen-title{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:25px;
+    color:#1f2937;
+}
+.input-box{
+    width:100%;
+    background-color:#fff;
+    border:none;
+    padding:15px;
+    border-radius:15px;
+    font-size:16px;
+    margin-bottom:15px;
+    text-align:right;
+    box-sizing:border-box;
+    outline:none;
+}
+.action-btn{
+    background-color:#fff;
+    color:#1f2937;
+    font-weight:bold;
+    border:none;
+    padding:10px 40px;
+    border-radius:15px;
+    font-size:18px;
+    cursor:pointer;
+    margin-top:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+    transition:.2s;
+}
+.action-btn:hover{background-color:#f3f4f6}
+.roles-container{
+    display:flex;
+    gap:15px;
+    width:100%;
+}
+.role-card{
+    flex:1;
+    background-color:#fff;
+    border-radius:20px;
+    padding:25px 10px;
+    text-align:center;
+    cursor:pointer;
+    box-shadow:0 4px 6px rgba(0,0,0,.05);
+    transition:.2s;
+}
+.role-card:hover{transform:translateY(-3px)}
+.role-card span{
+    font-size:50px;
+    display:block;
+    margin-bottom:10px;
+}
+.role-title{
+    font-size:18px;
+    font-weight:bold;
+    color:#1f2937;
+}
+.section-card{
+    background-color:#fef08a;
+    width:100%;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:15px;
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+    transition:.2s;
+    box-sizing:border-box;
+}
+.section-card:hover{transform:scale(1.02)}
+.section-card span{
+    display:block;
+    font-size:24px;
+    margin-top:5px;
+}
+.or-text{
+    font-size:18px;
+    color:#6b7280;
+    margin:10px 0;
+}
+.top-banner-yellow{
+    background-color:#fef08a;
+    width:100%;
+    padding:15px 20px;
+    border-radius:15px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:right;
+    margin-bottom:15px;
+    box-sizing:border-box;
+}
+.student-row{
+    display:flex;
+    gap:12px;
+    width:100%;
+    margin-bottom:15px;
+}
+.cyan-box{
+    background-color:#a5f3fc;
+    border-radius:20px;
+    padding:15px;
+    box-sizing:border-box;
+}
+.half-cyan{
+    flex:1;
+    min-height:120px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+.full-cyan{
+    width:100%;
+    margin-bottom:15px;
+    text-align:right;
+}
+.box-title{
+    font-weight:bold;
+    font-size:16px;
+    margin-bottom:8px;
+    color:#155e75;
+}
+.emoji-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+    font-size:18px;
+    cursor:pointer;
+}
+.emoji-item{
+    padding:2px;
+    border-radius:5px;
+    transition:.1s;
+}
+.emoji-item:hover,.emoji-item.selected{
+    background-color:#fff;
+    transform:scale(1.1);
+}
+.question-card-item{
+    background-color:#fff;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:12px;
+    box-shadow:0 2px 5px rgba(0,0,0,.03);
+}
+.question-img-preview{
+    max-width:100%;
+    max-height:180px;
+    border-radius:10px;
+    margin-bottom:10px;
+    display:block;
+    object-fit:contain;
+}
+.mcq-option{
+    background-color:#f3f4f6;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-top:6px;
+    cursor:pointer;
+    font-size:14px;
+    color:#1f2937;
+    transition:.2s;
+    border:2px solid transparent;
+}
+.mcq-option:hover{
+    background-color:#f0fdfa;
+    border-color:#2dd4bf;
+}
+.mcq-option.correct{
+    background-color:#d1fae5!important;
+    border-color:#10b981!important;
+    font-weight:bold;
+    color:#065f46;
+}
+.mcq-option.wrong{
+    background-color:#fee2e2!important;
+    border-color:#ef4444!important;
+    color:#991b1b;
+}
+.teacher-textarea{
+    width:100%;
+    background-color:#a5f3fc;
+    border:none;
+    border-radius:15px;
+    padding:15px;
+    font-size:15px;
+    resize:none;
+    box-sizing:border-box;
+    margin-bottom:12px;
+    text-align:right;
+    outline:none;
+}
+.teacher-input-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+    width:100%;
+}
+.teacher-input{
+    flex:1;
+    background-color:#a5f3fc;
+    border:none;
+    border-radius:15px;
+    padding:12px 15px;
+    font-size:15px;
+    box-sizing:border-box;
+    text-align:right;
+    outline:none;
+}
+.correct-radio{
+    cursor:pointer;
+    width:20px;
+    height:20px;
+    accent-color:#0d9488;
+}
+.image-upload-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    background-color:#a5f3fc;
+    padding:10px 15px;
+    border-radius:15px;
+    font-size:14px;
+    color:#155e75;
+    font-weight:bold;
+}
+.image-upload-row input[type=file]{font-size:13px}
+#teacherContributionsBoard{max-height:none;overflow:visible;overscroll-behavior:auto;scrollbar-width:none;}
+#teacherContributionsBoard::-webkit-scrollbar{display:none;}
+.rankings-box{
+    background-color:#a5f3fc;
+    width:100%;
+    border-radius:20px;
+    padding:15px 20px;
+    box-sizing:border-box;
+    text-align:right;
+    margin-bottom:20px;
+    max-height:340px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scrollbar-width:thin;
+    scrollbar-color:#0891b2 #e0f2fe;
+}
+.rankings-box::-webkit-scrollbar,#teacherContributionsList::-webkit-scrollbar,#studentRankDisplay::-webkit-scrollbar{width:8px}
+.rankings-box::-webkit-scrollbar-track,#teacherContributionsList::-webkit-scrollbar-track,#studentRankDisplay::-webkit-scrollbar-track{background:#e0f2fe;border-radius:10px}
+.rankings-box::-webkit-scrollbar-thumb,#teacherContributionsList::-webkit-scrollbar-thumb,#studentRankDisplay::-webkit-scrollbar-thumb{background:#0891b2;border-radius:10px}
+.rankings-title{
+    font-weight:bold;
+    font-size:16px;
+    margin-bottom:10px;
+    color:#155e75;
+}
+.rank-item{
+    font-size:15px;
+    margin-bottom:7px;
+    color:#1f2937;
+    padding:7px;
+    background:rgba(255,255,255,.45);
+    border-radius:10px;
+}
+.back-link{
+    margin:10px 0 20px;
+    color:#6b7280;
+    font-size:14px;
+    cursor:pointer;
+    text-decoration:underline;
+}
+.bank-question-box{
+    background-color:#fff;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:10px;
+    border:1px solid #a5f3fc;
+}
+.bank-btn{
+    background-color:#fee2e2;
+    color:#991b1b;
+    border:none;
+    padding:5px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:bold;
+    margin-left:5px;
+}
+.bank-btn-edit{
+    background-color:#fef08a;
+    color:#854d0e;
+}
+.student-stats{
+    display:flex;
+    gap:7px;
+    width:100%;
+    margin-top:5px;
+}
+.stat-mini{
+    flex:1;
+    background:#fff;
+    border-radius:10px;
+    padding:6px;
+    text-align:center;
+    font-size:12px;
+}
+.stat-correct{color:#047857;font-weight:bold}
+.stat-wrong{color:#b91c1c;font-weight:bold}
+.daily-info{
+    font-size:12px;
+    color:#155e75;
+    margin-top:5px;
+    text-align:center;
+}
+
+.recovery-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9999;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+.recovery-overlay.open{display:flex}
+.recovery-modal{width:100%;max-width:390px;background:#fcfdf6;border-radius:24px;padding:24px;box-shadow:0 15px 45px rgba(0,0,0,.22);box-sizing:border-box;text-align:right}
+.recovery-modal .input-box{border:1px solid #a5f3fc;margin-top:14px}
+.recovery-actions{display:flex;gap:10px;flex-wrap:wrap}
+.recovery-actions button{flex:1;min-width:110px}
+</style>
+</head>
+
+<body>
+
+<div class="bg-circle circle-1"></div>
+<div class="bg-circle circle-2"></div>
+<div class="bg-circle circle-3"></div>
+
+<div id="screen-splash" class="screen active">
+    <div class="sabiq-logo">SABIQ</div>
+</div>
+
+<div id="screen-login" class="screen" style="justify-content:flex-start;padding-top:50px;">
+    <div class="global-credits-bar"> العنود بن غميجان جميع الحقوق محفوظة © سابق</div>
+
+    <div class="yellow-card">
+        <div class="screen-title">تسجيل الدخول / إنشاء حساب</div>
+
+        <input type="email" id="loginEmailInput" class="input-box" placeholder="البريد الإلكتروني">
+        <input type="password" id="loginPassInput" class="input-box" placeholder="كلمة المرور">
+        <input type="text" id="loginNameInput" class="input-box" placeholder="اسمك">
+
+        <button class="action-btn" onclick="submitAuthCredentials()">متابعة</button>
+        <button type="button" class="action-btn" style="background:#a5f3fc;font-size:14px;padding:10px 20px;" onclick="openPasswordRecovery()">استعادة كلمة المرور</button>
+    </div>
+</div>
+
+<div id="screen-who" class="screen" style="justify-content:flex-start;padding-top:50px;">
+    <div class="global-credits-bar"> العنود بن غميجان جميع الحقوق محفوظة © سابق</div>
+
+    <div class="screen-title" style="margin-bottom:30px;">من أنت؟</div>
+
+    <div class="yellow-card" style="padding:25px 20px;">
+        <div class="roles-container">
+
+            <div class="role-card" onclick="selectRole('student')">
+                <span>🎒</span>
+                <div class="role-title">طالب</div>
+            </div>
+
+            <div class="role-card" onclick="selectRole('teacher')">
+                <span>💼</span>
+                <div class="role-title">معلم</div>
+            </div>
+
+        </div>
+    </div>
+
+    <span class="back-link" onclick="showScreen('screen-login')" style="margin-top:20px;">
+        الرجوع
+    </span>
+</div>
+
+<div id="screen-section" class="screen" style="justify-content:flex-start;padding-top:50px;">
+
+    <div class="global-credits-bar">العنود بن غميجان جميع الحقوق محفوظة © سابق</div>
+
+    <div class="screen-title" id="sectionScreenTitle" style="margin-bottom:25px;">
+        اختر القسم
+    </div>
+
+    <div class="section-card" onclick="chooseSection('قدرات')">
+        قدرات
+        <span>🧮</span>
+    </div>
+
+    <div class="or-text">أو</div>
+
+    <div class="section-card" onclick="chooseSection('تحصيلي')">
+        تحصيلي
+        <span>📐</span>
+    </div>
+
+    <div class="section-card" onclick="chooseSection('إدارة أعمال')">
+        تحصيلي إدارة أعمال
+        <span>💼</span>
+    </div>
+
+    <span class="back-link" onclick="showScreen('screen-who')">
+        الرجوع
+    </span>
+</div>
+
+<div id="screen-student" class="screen" style="justify-content:flex-start;padding-top:20px;">
+
+    <div class="global-credits-bar"> العنود بن غميجان جميع الحقوق محفوظة © سابق</div>
+
+    <div class="top-banner-yellow" id="studentWelcomeBanner">
+        مرحباً بك :
+    </div>
+
+    <div class="student-row">
+
+        <div class="cyan-box half-cyan">
+
+            <div class="box-title">
+                بياناتك 👤
+            </div>
+
+            <div id="studentNameDisplay"
+                 style="font-size:15px;color:#1f2937;font-weight:bold;margin-bottom:8px;">
+            </div>
+
+            <select
+                id="studentClassInput"
+                class="input-box"
+                style="padding:9px;font-size:13px;margin:0;width:100%;"
+                aria-label="اختر الصف"
+                onchange="saveStudentClass()"
+            >
+                <option value="">اختر الصف</option>
+                <option value="الأول الثانوي">أول ثانوي</option>
+                <option value="الثاني الثانوي">ثاني ثانوي</option>
+                <option value="الثالث الثانوي">ثالث ثانوي</option>
+            </select>
+
+            <label for="studentSchoolSectionInput" style="display:block;font-size:12px;font-weight:bold;margin-top:9px;margin-bottom:4px;color:#155e75;">الفصل (اختياري)</label>
+            <select
+                id="studentSchoolSectionInput"
+                class="input-box"
+                style="padding:9px;font-size:13px;margin:0;width:100%;"
+                aria-label="اختر الفصل"
+                onchange="saveStudentClass()"
+            >
+                <option value="">اختر الفصل</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="إدارة أعمال">إدارة أعمال</option>
+            </select>
+
+            <div id="studentSectionDisplay"
+                 style="font-size:12px;color:#155e75;margin-top:6px;">
+            </div>
+
+        </div>
+
+        <div class="cyan-box half-cyan">
+
+            <div class="box-title" style="font-size:15px;">
+                اختر شكلاً لك :
+            </div>
+
+            <div class="emoji-grid">
+
+                <span class="emoji-item" onclick="pickEmoji('🪷',this)">🪷</span>
+                <span class="emoji-item" onclick="pickEmoji('🍄',this)">🍄</span>
+                <span class="emoji-item" onclick="pickEmoji('🪻',this)">🪻</span>
+                <span class="emoji-item" onclick="pickEmoji('🌗',this)">🌗</span>
+                <span class="emoji-item" onclick="pickEmoji('⭐️',this)">⭐️</span>
+                <span class="emoji-item" onclick="pickEmoji('🪐',this)">🪐</span>
+                <span class="emoji-item" onclick="pickEmoji('☄️',this)">☄️</span>
+                <span class="emoji-item" onclick="pickEmoji('⛄️',this)">⛄️</span>
+                <span class="emoji-item" onclick="pickEmoji('☕️',this)">☕️</span>
+                <span class="emoji-item" onclick="pickEmoji('🥇',this)">🥇</span>
+                <span class="emoji-item" onclick="pickEmoji('🎧',this)">🎧</span>
+                <span class="emoji-item" onclick="pickEmoji('📱',this)">📱</span>
+                <span class="emoji-item" onclick="pickEmoji('💸',this)">💸</span>
+                <span class="emoji-item" onclick="pickEmoji('🎀',this)">🎀</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="rankings-box">
+
+        <div class="rankings-title">
+            لوحة المراكز 🏆
+        </div>
+
+        <div id="studentRankDisplay">
+            جاري تحميل المراكز...
+        </div>
+
+    </div>
+
+    <div id="studentQuestionsSectionWrapper"></div>
+
+    <span class="back-link" onclick="logout()">
+        تسجيل خروج
+    </span>
+
+</div>
+
+<div id="screen-teacher" class="screen" style="justify-content:flex-start;padding-top:20px;">
+
+    <div class="global-credits-bar">
+         العنود بن غميجان جميع الحقوق محفوظة © سابق
+    </div>
+
+    <div class="top-banner-yellow" id="teacherWelcomeBanner">
+        مرحباً أستاذ/ة :
+    </div>
+
+    <div id="teacherFormsContainer" style="width:100%;"></div>
+
+    <div class="rankings-box">
+
+        <div class="rankings-title">
+            مراكز الطلاب 🏆
+        </div>
+
+        <div id="teacherStudentRankingsList">
+            جاري التحميل...
+        </div>
+
+    </div>
+
+    <div class="rankings-box" id="teacherContributionsBoard">
+
+        <div class="rankings-title">
+            مساهمات المعلمين في بنك الأسئلة 🏆
+        </div>
+
+        <div id="teacherContributionsList">
+            جاري التحميل...
+        </div>
+
+    </div>
+
+    <div class="cyan-box full-cyan" style="margin-top:10px;">
+
+        <div class="box-title">
+            إدارة بنك أسئلتي الحالي 📚
+        </div>
+
+        <div id="teacherQuestionBankList"
+             style="max-height:250px;overflow-y:auto;">
+            لا توجد أسئلة مضافة بعد
+        </div>
+
+    </div>
+
+    <span class="back-link" onclick="logout()">
+        تسجيل خروج
+    </span>
+
+</div>
+
+<script>
+
+let currentName = "";
+let currentEmail = "";
+let userRole = "";
+let selectedSection = "";
+let currentClass = "";
+let currentSchoolSection = "";
+
+const DAILY_BASE_LIMIT = 5;
+
+function getTodayKey(){
+    const d = new Date();
+
+    return d.getFullYear() + "-" +
+           String(d.getMonth()+1).padStart(2,"0") + "-" +
+           String(d.getDate()).padStart(2,"0");
+}
+
+function safeEmail(email){
+    return email.replace(/[.#$\/\[\]]/g,"_");
+}
+
+function escapeHtml(text){
+    return String(text ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function getStudentLimit(rank){
+
+    if(!rank || rank < 1)
+        return DAILY_BASE_LIMIT;
+
+    return DAILY_BASE_LIMIT + rank;
+}
+
+function getSubTitle(subPath){
+
+    const names = {
+
+        quantitative:"كمي",
+        verbal:"لفظي",
+        chemistry:"كيمياء",
+        physics:"فيزياء",
+        math:"رياضيات",
+        biology:"أحياء",
+        arabic:"اللغة العربية",
+        religion:"الدين",
+        socialStudies:"الدراسات الاجتماعية (التاريخ والجغرافيا)",
+        digitalSkills:"المهارات الرقمية",
+        lawPrinciples:"مبادئ القانون"
+
+    };
+
+    return names[subPath] || subPath;
+}
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+    const savedEmail =
+        localStorage.getItem("sabiq_saved_email");
+
+    const savedPass =
+        localStorage.getItem("sabiq_saved_pass");
+
+    const savedName =
+        localStorage.getItem("sabiq_saved_name");
+
+    const savedRole =
+        localStorage.getItem("sabiq_saved_role");
+
+    const savedClass =
+        localStorage.getItem("sabiq_saved_class");
+    const savedSchoolSection = localStorage.getItem("sabiq_saved_school_section");
+    if(savedSchoolSection) currentSchoolSection = savedSchoolSection;
+
+    if(savedEmail){
+
+        document.getElementById(
+            "loginEmailInput"
+        ).value = savedEmail;
+
+        currentEmail =
+            safeEmail(savedEmail);
+    }
+
+    if(savedPass){
+
+        document.getElementById(
+            "loginPassInput"
+        ).value = savedPass;
+    }
+
+    if(savedName){
+
+        document.getElementById(
+            "loginNameInput"
+        ).value = savedName;
+
+        currentName = savedName;
+    }
+
+    if(savedClass){
+
+        currentClass = savedClass;
+    }
+
+    if(savedRole){
+
+        userRole = savedRole;
+    }
+
+    setTimeout(()=>{
+
+        if(savedEmail && savedPass && savedName){
+
+            showScreen("screen-section");
+
+            document.getElementById(
+                "sectionScreenTitle"
+            ).innerText =
+                savedRole === "teacher"
+                ? "اختر قسم المعلم"
+                : "اختر قسم الطالب";
+
+        }else{
+
+            showScreen("screen-login");
+
+        }
+
+    },1500);
+
+});
+
+function showScreen(screenId){
+
+    document.querySelectorAll(".screen")
+        .forEach(s=>s.classList.remove("active"));
+
+    const target =
+        document.getElementById(screenId);
+
+    if(target){
+        target.classList.add("active");
+    }
+
+    window.scrollTo(0,0);
+}
+
+function submitAuthCredentials(){
+
+    const emailVal =
+        document.getElementById(
+            "loginEmailInput"
+        ).value.trim();
+
+    const passVal =
+        document.getElementById(
+            "loginPassInput"
+        ).value.trim();
+
+    const nameVal =
+        document.getElementById(
+            "loginNameInput"
+        ).value.trim();
+
+    if(!emailVal){
+
+        alert(
+            "الرجاء كتابة البريد الإلكتروني!"
+        );
+
+        return;
+    }
+
+    if(!passVal){
+
+        alert(
+            "الرجاء كتابة كلمة المرور!"
+        );
+
+        return;
+    }
+
+    if(!nameVal){
+
+        alert(
+            "الرجاء كتابة اسمك!"
+        );
+
+        return;
+    }
+
+    currentEmail =
+        safeEmail(emailVal);
+
+    currentName =
+        nameVal;
+
+    localStorage.setItem(
+        "sabiq_saved_email",
+        emailVal
+    );
+
+    localStorage.setItem(
+        "sabiq_saved_pass",
+        passVal
+    );
+
+    localStorage.setItem(
+        "sabiq_saved_name",
+        nameVal
+    );
+
+    const studentRef =
+        window.ref(
+            window.db,
+            `users/student/${currentEmail}`
+        );
+
+    const teacherRef =
+        window.ref(
+            window.db,
+            `users/teacher/${currentEmail}`
+        );
+
+    Promise.all([
+        window.get(studentRef),
+        window.get(teacherRef)
+    ]).then(results=>{
+
+        const studentData =
+            results[0].val();
+
+        const teacherData =
+            results[1].val();
+
+        if(studentData){
+
+            userRole = "student";
+
+            localStorage.setItem(
+                "sabiq_saved_role",
+                "student"
+            );
+
+            currentClass =
+                studentData.className || "";
+            currentSchoolSection = studentData.schoolSection || localStorage.getItem("sabiq_saved_school_section") || "";
+
+            localStorage.setItem(
+                "sabiq_saved_class",
+                currentClass
+            );
+            localStorage.setItem("sabiq_saved_school_section", currentSchoolSection);
+
+            document.getElementById(
+                "sectionScreenTitle"
+            ).innerText =
+                "اختر قسم الطالب";
+
+            showScreen(
+                "screen-section"
+            );
+
+        }else if(teacherData){
+
+            userRole = "teacher";
+
+            localStorage.setItem(
+                "sabiq_saved_role",
+                "teacher"
+            );
+
+            document.getElementById(
+                "sectionScreenTitle"
+            ).innerText =
+                "اختر قسم المعلم";
+
+            showScreen(
+                "screen-section"
+            );
+
+        }else{
+
+            showScreen(
+                "screen-who"
+            );
+        }
+
+    }).catch(err=>{
+
+        console.error(err);
+
+        showScreen(
+            "screen-who"
+        );
+
+    });
+}
+
+function selectRole(role){
+
+    userRole = role;
+
+    localStorage.setItem(
+        "sabiq_saved_role",
+        role
+    );
+
+    const userRef =
+        window.ref(
+            window.db,
+            `users/${userRole}/${currentEmail}`
+        );
+
+    window.set(userRef,{
+
+        name:currentName,
+
+        email:currentEmail,
+
+        role:userRole,
+
+        className:
+            role === "student"
+            ? currentClass
+            : "",
+
+        createdAt:Date.now()
+
+    }).catch(err=>console.error(err));
+
+    document.getElementById(
+        "sectionScreenTitle"
+    ).innerText =
+        role === "student"
+        ? "اختر قسم الطالب"
+        : "اختر قسم المعلم";
+
+    showScreen(
+        "screen-section"
+    );
+}
+
+function chooseSection(sectionType){
+
+    selectedSection =
+        sectionType;
+
+    localStorage.setItem(
+        "sabiq_last_section",
+        sectionType
+    );
+
+    if(userRole === "student"){
+
+        showScreen(
+            "screen-student"
+        );
+
+        document.getElementById(
+            "studentWelcomeBanner"
+        ).innerText =
+            `مرحباً بك : ${currentName} (${sectionType})`;
+
+        loadStudentView();
+
+    }else{
+
+        showScreen(
+            "screen-teacher"
+        );
+
+        document.getElementById(
+            "teacherWelcomeBanner"
+        ).innerText =
+            `مرحباً أستاذ/ة : ${currentName} (${sectionType})`;
+
+        loadTeacherView();
+    }
+}
+
+/*
+==================================================
+حفظ الفصل - الإصلاح الأساسي
+==================================================
+*/
+
+function saveStudentClass(){
+
+    if(userRole !== "student")
+        return;
+
+    const input =
+        document.getElementById(
+            "studentClassInput"
+        );
+
+    if(!input)
+        return;
+
+    const className =
+        input.value.trim();
+    const schoolSectionInput = document.getElementById("studentSchoolSectionInput");
+    const schoolSection = schoolSectionInput ? schoolSectionInput.value : "";
+
+    currentClass = className;
+    currentSchoolSection = schoolSection;
+
+    localStorage.setItem("sabiq_saved_class", className);
+    localStorage.setItem("sabiq_saved_school_section", schoolSection);
+
+    if(!currentEmail)
+        return;
+
+    /*
+      تحديث بيانات الطالب.
+    */
+
+    const studentRef =
+        window.ref(
+            window.db,
+            `users/student/${currentEmail}`
+        );
+
+    window.update(
+        studentRef,
+        {
+
+            name:currentName,
+
+            email:currentEmail,
+
+            role:"student",
+
+            className:
+                className || "غير محدد",
+
+            schoolSection: schoolSection || "",
+
+            updatedAt:Date.now()
+
+        }
+    ).catch(err=>console.error(err));
+
+    /*
+      تحديث الفصل داخل المراكز أيضًا.
+    */
+
+    if(selectedSection){
+
+        const scoreRef =
+            window.ref(
+                window.db,
+                `scores/${selectedSection}/${currentEmail}`
+            );
+
+        window.get(scoreRef)
+        .then(snapshot=>{
+
+            const old =
+                snapshot.val() || {};
+
+            let scoreData;
+
+            if(
+                old &&
+                typeof old === "object"
+            ){
+
+                scoreData = old;
+
+            }else{
+
+                scoreData = {
+
+                    points:
+                        Number(old) || 0,
+
+                    correct:0,
+
+                    wrong:0
+                };
+            }
+
+            window.set(
+                scoreRef,
+                {
+
+                    name:
+                        currentName,
+
+                    email:
+                        currentEmail,
+
+                    className:
+                        className || "غير محدد",
+
+                    schoolSection: schoolSection || "",
+
+                    points:
+                        Number(
+                            scoreData.points || 0
+                        ),
+
+                    correct:
+                        Number(
+                            scoreData.correct || 0
+                        ),
+
+                    wrong:
+                        Number(
+                            scoreData.wrong || 0
+                        ),
+
+                    section:
+                        selectedSection,
+
+                    updatedAt:
+                        Date.now()
+
+                }
+            );
+
+        })
+        .catch(err=>{
+            console.error(
+                "خطأ في تحديث الفصل داخل المراكز:",
+                err
+            );
+        });
+    }
+
+    /*
+      تحديث العرض مباشرة.
+    */
+
+    setupRankingsListener();
+}
+
+function pickEmoji(
+    emojiSymbol,
+    clickedElement
+){
+
+    document
+        .querySelectorAll(".emoji-item")
+        .forEach(
+            el=>el.classList.remove("selected")
+        );
+
+    if(clickedElement){
+
+        clickedElement.classList.add(
+            "selected"
+        );
+    }
+
+    localStorage.setItem(
+        "sabiq_emoji",
+        emojiSymbol
+    );
+
+    if(currentEmail){
+
+        const studentRef =
+            window.ref(
+                window.db,
+                `users/student/${currentEmail}`
+            );
+
+        window.update(
+            studentRef,
+            {
+                emoji:emojiSymbol
+            }
+        ).catch(()=>{});
+    }
+}
+
+function getStudentRankData(){
+
+    return new Promise(resolve=>{
+
+        if(!selectedSection){
+
+            resolve([]);
+
+            return;
+        }
+
+        const scoresRef =
+            window.ref(
+                window.db,
+                `scores/${selectedSection}`
+            );
+
+        window.get(scoresRef)
+        .then(snapshot=>{
+
+            const data =
+                snapshot.val() || {};
+
+            const entries =
+                Object.keys(data)
+                .map(email=>{
+
+                    const item =
+                        data[email];
+
+                    if(
+                        item &&
+                        typeof item === "object"
+                    ){
+
+                        return {
+
+                            email,
+
+                            name:
+                                item.name ||
+                                email,
+
+                            className:
+                                item.className ||
+                                "غير محدد",
+
+                            schoolSection: item.schoolSection || "",
+
+                            points:
+                                Number(
+                                    item.points || 0
+                                )
+
+                        };
+
+                    }
+
+                    return {
+
+                        email,
+
+                        name:email,
+
+                        className:"غير محدد",
+
+                        points:
+                            Number(item || 0)
+
+                    };
+
+                })
+                // لا يدخل ترتيب المراكز إلا من أجاب عن سؤال واحد على الأقل.
+                .filter(item => Number(item.correct || 0) + Number(item.wrong || 0) > 0)
+                .sort(
+                    (a,b)=>b.points-a.points
+                );
+
+            entries.forEach(
+                (item,index)=>{
+                    item.rank =
+                        index + 1;
+                }
+            );
+
+            resolve(entries);
+
+        })
+        .catch(()=>{
+            resolve([]);
+        });
+
+    });
+}
+
+/*
+==================================================
+لوحة مراكز الطالب
+==================================================
+*/
+
+function setupRankingsListener(){
+
+    if(!selectedSection)
+        return;
+
+    const scoresRef =
+        window.ref(
+            window.db,
+            `scores/${selectedSection}`
+        );
+
+    window.onValue(
+        scoresRef,
+        snapshot=>{
+
+            const data =
+                snapshot.val() || {};
+
+            let sortedEntries =
+                Object.keys(data)
+                .map(email=>{
+
+                    const item =
+                        data[email];
+
+                    if(
+                        item &&
+                        typeof item === "object"
+                    ){
+
+                        return {
+
+                            name:
+                                item.name ||
+                                email,
+
+                            className:
+                                item.className ||
+                                "غير محدد",
+
+                            schoolSection: item.schoolSection || "",
+
+                            points:
+                                Number(
+                                    item.points || 0
+                                ),
+
+                            correct:
+                                Number(
+                                    item.correct || 0
+                                ),
+
+                            wrong:
+                                Number(
+                                    item.wrong || 0
+                                ),
+
+                            email
+
+                        };
+
+                    }
+
+                    return {
+
+                        name:email,
+
+                        className:"غير محدد",
+
+                        points:
+                            Number(item || 0),
+
+                        correct:0,
+
+                        wrong:0,
+
+                        email
+
+                    };
+
+                })
+                // لا تظهر الطالبة في المراكز حتى تجيب عن سؤال واحد على الأقل.
+                .filter(item => Number(item.correct || 0) + Number(item.wrong || 0) > 0)
+                .sort(
+                    (a,b)=>b.points-a.points
+                );
+
+            sortedEntries.forEach(
+                (item,index)=>{
+                    item.rank =
+                        index + 1;
+                }
+            );
+
+            const display =
+                document.getElementById(
+                    "studentRankDisplay"
+                );
+
+            if(!display)
+                return;
+
+            if(
+                sortedEntries.length === 0
+            ){
+
+                display.innerHTML =
+                    "لم تبدأ المراكز بعد";
+
+                return;
+            }
+
+            let html = "";
+
+            sortedEntries.forEach(item=>{
+
+                let medal = "";
+
+                if(item.rank === 1)
+                    medal = "🥇";
+
+                else if(item.rank === 2)
+                    medal = "🥈";
+
+                else if(item.rank === 3)
+                    medal = "🥉";
+
+                const isMe =
+                    item.email === currentEmail
+                    ? "border:2px solid #0d9488;"
+                    : "";
+
+                html += `
+
+                    <div
+                        class="rank-item"
+                        style="${isMe}"
+                    >
+
+                        <b>
+                            ${medal}
+                            المركز ${item.rank}
+                        </b>
+
+                        — ${escapeHtml(item.name)}
+
+                        — المرحلة/الصف: ${escapeHtml(item.className || "غير محدد")}
+                        — الفصل: ${escapeHtml(item.schoolSection || "غير محدد")}
+                        — ${item.points} نقطة
+
+                    </div>
+
+                `;
+            });
+
+            display.innerHTML =
+                html;
+
+        }
+    );
+}
+
+/*
+==================================================
+تحديث نقاط الطالب
+==================================================
+*/
+
+function updateStudentScore(correct){
+
+    if(
+        !currentEmail ||
+        !selectedSection
+    )
+        return;
+
+    const scoreRef =
+        window.ref(
+            window.db,
+            `scores/${selectedSection}/${currentEmail}`
+        );
+
+    window.get(scoreRef)
+    .then(snapshot=>{
+
+        let data =
+            snapshot.val() || {};
+
+        if(
+            !data ||
+            typeof data !== "object"
+        ){
+
+            data = {
+
+                points:
+                    Number(data) || 0,
+
+                correct:0,
+
+                wrong:0
+
+            };
+        }
+
+        const oldPoints =
+            Number(data.points || 0);
+
+        const oldCorrect =
+            Number(data.correct || 0);
+
+        const oldWrong =
+            Number(data.wrong || 0);
+
+        const newData = {
+
+            name:
+                currentName,
+
+            email:
+                currentEmail,
+
+            /*
+              الفصل محفوظ مع النقاط.
+            */
+            className:
+                currentClass ||
+                data.className ||
+                "غير محدد",
+
+            schoolSection: currentSchoolSection || data.schoolSection || "",
+
+            points:
+                correct
+                ? oldPoints + 1
+                : oldPoints,
+
+            correct:
+                correct
+                ? oldCorrect + 1
+                : oldCorrect,
+
+            wrong:
+                correct
+                ? oldWrong
+                : oldWrong + 1,
+
+            section:
+                selectedSection,
+
+            updatedAt:
+                Date.now()
+
+        };
+
+        window.set(
+            scoreRef,
+            newData
+        ).catch(err=>{
+
+            console.error(
+                "خطأ في حفظ النقاط:",
+                err
+            );
+
+        });
+
+    })
+    .catch(err=>{
+
+        console.error(
+            "خطأ في قراءة النقاط:",
+            err
+        );
+
+    });
+}
+
+function recordQuestionAttempt(
+    qKey,
+    isCorrect
+){
+
+    updateStudentScore(
+        isCorrect
+    );
+
+    if(!currentEmail || !selectedSection)
+        return;
+
+    const nextReviewTime =
+        Date.now() +
+        (
+            isCorrect
+            ? 24 * 60 * 60 * 1000
+            : 2 * 60 * 60 * 1000
+        );
+
+    const reviewRef =
+        window.ref(
+            window.db,
+            `reviews/${selectedSection}/${currentEmail}/${qKey}`
+        );
+
+    window.set(
+        reviewRef,
+        {
+
+            nextShow:
+                nextReviewTime,
+
+            lastResult:
+                isCorrect
+                ? "correct"
+                : "wrong"
+
+        }
+    );
+}
+
+function getDailyQuestionCount(
+    subPath
+){
+
+    return new Promise(resolve=>{
+
+        const refPath =
+            `dailyQuestionUsage/${getTodayKey()}/${selectedSection}/${currentEmail}/${subPath}`;
+
+        const usageRef =
+            window.ref(
+                window.db,
+                refPath
+            );
+
+        window.get(
+            usageRef
+        )
+        .then(snapshot=>{
+
+            resolve(
+                Number(
+                    snapshot.val() || 0
+                )
+            );
+
+        })
+        .catch(()=>{
+            resolve(0);
+        });
+
+    });
+}
+
+function increaseDailyQuestionCount(
+    subPath
+){
+
+    const refPath =
+        `dailyQuestionUsage/${getTodayKey()}/${selectedSection}/${currentEmail}/${subPath}`;
+
+    const usageRef =
+        window.ref(
+            window.db,
+            refPath
+        );
+
+    return window.get(
+        usageRef
+    ).then(snapshot=>{
+
+        const count =
+            Number(
+                snapshot.val() || 0
+            );
+
+        return window.set(
+            usageRef,
+            count + 1
+        );
+
+    });
+}
+
+function renderQuestionsFromFirebase(
+    subPath,
+    containerElem
+){
+
+    const questionsRef =
+        window.ref(
+            window.db,
+            `questions/${selectedSection}/${subPath}`
+        );
+
+    const reviewsRef =
+        window.ref(
+            window.db,
+            `reviews/${selectedSection}/${currentEmail}`
+        );
+
+    window.onValue(
+        questionsRef,
+        snapshot=>{
+
+            const allQuestions =
+                snapshot.val();
+
+            if(!allQuestions){
+
+                containerElem.innerHTML =
+                    "<div style='font-size:14px;color:#6b7280;'>لا توجد أسئلة متاحة حالياً في هذا القسم</div>";
+
+                return;
+            }
+
+            Promise.all([
+
+                window.get(reviewsRef),
+
+                getStudentRankData(),
+
+                getDailyQuestionCount(
+                    subPath
+                )
+
+            ])
+            .then(results=>{
+
+                const reviewsData =
+                    results[0].val() || {};
+
+                const ranking =
+                    results[1];
+
+                const dailyCount =
+                    results[2];
+
+                const me =
+                    ranking.find(
+                        x=>x.email === currentEmail
+                    );
+
+                const myRank =
+                    me
+                    ? me.rank
+                    : 0;
+
+                const limit =
+                    getStudentLimit(
+                        myRank
+                    );
+
+                const now =
+                    Date.now();
+
+                containerElem.innerHTML =
+                    "";
+
+                let displayedCount = 0;
+
+                Object.keys(
+                    allQuestions
+                ).forEach(qKey=>{
+
+                    if(
+                        dailyCount +
+                        displayedCount >=
+                        limit
+                    ){
+                        return;
+                    }
+
+                    const qObj =
+                        allQuestions[qKey];
+
+                    const studentReview =
+                        reviewsData[qKey];
+
+                    if(
+                        studentReview &&
+                        studentReview.nextShow &&
+                        now <
+                        studentReview.nextShow
+                    ){
+                        return;
+                    }
+
+                    displayedCount++;
+
+                    const qCard =
+                        document.createElement(
+                            "div"
+                        );
+
+                    qCard.className =
+                        "question-card-item";
+
+                    if(
+                        qObj.image &&
+                        qObj.image.trim() !== ""
+                    ){
+
+                        const img =
+                            document.createElement(
+                                "img"
+                            );
+
+                        img.src =
+                            qObj.image;
+
+                        img.className =
+                            "question-img-preview";
+
+                        qCard.appendChild(
+                            img
+                        );
+                    }
+
+                    const qTitle =
+                        document.createElement(
+                            "div"
+                        );
+
+                    qTitle.style.fontWeight =
+                        "bold";
+
+                    qTitle.style.fontSize =
+                        "15px";
+
+                    qTitle.style.color =
+                        "#1f2937";
+
+                    qTitle.style.marginBottom =
+                        "8px";
+
+                    qTitle.innerText =
+                        `سؤال ${displayedCount}: ${qObj.question}`;
+
+                    qCard.appendChild(
+                        qTitle
+                    );
+
+                    const ytContainer =
+                        document.createElement(
+                            "div"
+                        );
+
+                    ytContainer.style.marginTop =
+                        "10px";
+
+                    ytContainer.style.display =
+                        "none";
+
+                    if(qObj.options){
+
+                        qObj.options.forEach(
+                            (
+                                optText,
+                                optIndex
+                            )=>{
+
+                            const optDiv =
+                                document.createElement(
+                                    "div"
+                                );
+
+                            optDiv.className =
+                                "mcq-option";
+
+                            optDiv.innerText =
+                                optText;
+
+                            optDiv.onclick =
+                                function(){
+
+                                const siblings =
+                                    qCard.querySelectorAll(
+                                        ".mcq-option"
+                                    );
+
+                                siblings.forEach(
+                                    s=>{
+                                        s.style.pointerEvents =
+                                            "none";
+                                    }
+                                );
+
+                                const correct =
+                                    optIndex ===
+                                    Number(
+                                        qObj.correct
+                                    );
+
+                                if(correct){
+
+                                    optDiv.classList.add(
+                                        "correct"
+                                    );
+
+                                    optDiv.innerHTML +=
+                                        " ✓ (إجابة صحيحة)";
+
+                                    recordQuestionAttempt(
+                                        qKey,
+                                        true
+                                    );
+
+                                }else{
+
+                                    optDiv.classList.add(
+                                        "wrong"
+                                    );
+
+                                    optDiv.innerHTML +=
+                                        " ✗ (إجابة خاطئة)";
+
+                                    recordQuestionAttempt(
+                                        qKey,
+                                        false
+                                    );
+
+                                    if(
+                                        qObj.youtube &&
+                                        qObj.youtube.trim() !== ""
+                                    ){
+
+                                        ytContainer.style.display =
+                                            "block";
+
+                                        ytContainer.innerHTML = `
+
+                                            <div style="
+                                                background-color:#eff6ff;
+                                                border:1px solid #bfdbfe;
+                                                padding:10px;
+                                                border-radius:10px;
+                                                font-size:13px;
+                                                color:#1e40af;
+                                            ">
+
+                                                💡 تحتاج شرح لهذه الفكرة؟
+
+                                                <br>
+
+                                                <a
+                                                    href="${escapeHtml(qObj.youtube)}"
+                                                    target="_blank"
+                                                    style="
+                                                        color:#2563eb;
+                                                        font-weight:bold;
+                                                        text-decoration:underline;
+                                                    "
+                                                >
+                                                    شاهد فيديو الشرح المرتبط بالسؤال 📱
+                                                </a>
+
+                                            </div>
+
+                                        `;
+                                    }
+                                }
+
+                            };
+
+                            qCard.appendChild(
+                                optDiv
+                            );
+
+                        });
+                    }
+
+                    qCard.appendChild(
+                        ytContainer
+                    );
+
+                    containerElem.appendChild(
+                        qCard
+                    );
+
+                });
+
+                const info =
+                    document.createElement(
+                        "div"
+                    );
+
+                info.className =
+                    "daily-info";
+
+                info.innerText =
+                    `حدك اليومي: ${limit} أسئلة — أنجزت اليوم: ${Math.min(dailyCount + displayedCount,limit)} — مركزك: ${myRank || "غير مصنف"}`;
+
+                containerElem.insertBefore(
+                    info,
+                    containerElem.firstChild
+                );
+
+                if(displayedCount === 0){
+
+                    const msg =
+                        document.createElement(
+                            "div"
+                        );
+
+                    msg.style.fontSize =
+                        "14px";
+
+                    msg.style.color =
+                        "#155e75";
+
+                    msg.style.textAlign =
+                        "center";
+
+                    msg.style.padding =
+                        "10px";
+
+                    if(
+                        dailyCount >= limit
+                    ){
+
+                        msg.innerText =
+                            `🎉 أتممت حدك اليومي (${limit} أسئلة). ارجع غداً لأسئلة جديدة.`;
+
+                    }else{
+
+                        msg.innerText =
+                            "أحسنت! أتممت مراجعة جميع الأسئلة الحالية، ستعود لاحقاً وفق نظام التكرار المتباعد 🌟";
+
+                    }
+
+                    containerElem.appendChild(
+                        msg
+                    );
+                }
+
+            });
+
+        }
+    );
+}
+
+function checkSimilarQuestions(
+    typeSub,
+    newQText,
+    callback
+){
+
+    const questionsRef =
+        window.ref(
+            window.db,
+            `questions/${selectedSection}/${typeSub}`
+        );
+
+    window.get(
+        questionsRef
+    ).then(snapshot=>{
+
+        const allQ =
+            snapshot.val();
+
+        if(!allQ){
+
+            callback(true);
+
+            return;
+        }
+
+        let similarFound =
+            null;
+
+        const newWords =
+            newQText
+            .trim()
+            .split(/\s+/);
+
+        Object.keys(
+            allQ
+        ).forEach(k=>{
+
+            const existingText =
+                allQ[k].question || "";
+
+            let matchCount = 0;
+
+            newWords.forEach(w=>{
+
+                if(
+                    w.length > 2 &&
+                    existingText.includes(w)
+                ){
+                    matchCount++;
+                }
+
+            });
+
+            if(
+                matchCount >= 3 ||
+                (
+                    newQText.length >= 10 &&
+                    existingText.includes(
+                        newQText.substring(0,10)
+                    )
+                )
+            ){
+
+                similarFound =
+                    existingText;
+            }
+
+        });
+
+        if(similarFound){
+
+            const confirmAdd =
+                confirm(
+                    `⚠️ تنبيه: وُجد سؤال مشابه في البنك:\n\n"${similarFound}"\n\nهل أنت متأكد من رغبتك في إضافة هذا السؤال؟`
+                );
+
+            callback(
+                confirmAdd
+            );
+
+        }else{
+
+            callback(true);
+
+        }
+
+    }).catch(()=>{
+        callback(true);
+    });
+}
+
+function processAndSaveQuestion(
+    typeSub,
+    qText,
+    opt1,
+    opt2,
+    opt3,
+    opt4,
+    correctIndex,
+    fileInputId,
+    ytUrl,
+    editKey=null
+){
+
+    const fileInput =
+        document.getElementById(
+            fileInputId
+        );
+
+    const finishSave =
+        (imgData)=>{
+
+        try{
+
+            const questionData = {
+
+                question:
+                    qText,
+
+                options:[opt1,opt2,opt3,opt4],
+
+                correct:
+                    correctIndex,
+
+                image:
+                    imgData || "",
+
+                youtube:
+                    ytUrl || "",
+
+                teacherName:
+                    currentName,
+
+                teacherEmail:
+                    currentEmail,
+
+                timestamp:
+                    Date.now()
+
+            };
+
+            const questionsRef =
+                window.ref(
+                    window.db,
+                    `questions/${selectedSection}/${typeSub}`
+                );
+
+            let targetRef;
+
+            if(editKey){
+
+                targetRef =
+                    window.ref(
+                        window.db,
+                        `questions/${selectedSection}/${typeSub}/${editKey}`
+                    );
+
+                window.set(
+                    targetRef,
+                    questionData
+                ).then(()=>{
+
+                    alert(
+                        "تم تعديل السؤال بنجاح!"
+                    );
+
+                    loadTeacherView();
+
+                });
+
+            }else{
+
+                targetRef =
+                    window.push(
+                        questionsRef
+                    );
+
+                window.set(
+                    targetRef,
+                    questionData
+                ).then(()=>{
+
+                    updateTeacherPoints();
+
+                    alert(
+                        "تم نشر السؤال بنجاح في بنك الأسئلة!"
+                    );
+
+                    loadTeacherView();
+
+                });
+            }
+
+        }catch(err){
+
+            console.error(err);
+
+            alert(
+                "حدث خطأ أثناء حفظ السؤال."
+            );
+        }
+    };
+
+    if(
+        fileInput &&
+        fileInput.files &&
+        fileInput.files[0]
+    ){
+
+        const reader =
+            new FileReader();
+
+        reader.onload =
+            function(e){
+
+            const img =
+                new Image();
+
+            img.onload =
+                function(){
+
+                const canvas =
+                    document.createElement(
+                        "canvas"
+                    );
+
+                const MAX_WIDTH =
+                    400;
+
+                let width =
+                    img.width;
+
+                let height =
+                    img.height;
+
+                if(
+                    width >
+                    MAX_WIDTH
+                ){
+
+                    height =
+                        Math.round(
+                            height *
+                            (
+                                MAX_WIDTH /
+                                width
+                            )
+                        );
+
+                    width =
+                        MAX_WIDTH;
+                }
+
+                canvas.width =
+                    width;
+
+                canvas.height =
+                    height;
+
+                const ctx =
+                    canvas.getContext(
+                        "2d"
+                    );
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+                finishSave(
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        .6
+                    )
+                );
+
+            };
+
+            img.src =
+                e.target.result;
+
+        };
+
+        reader.readAsDataURL(
+            fileInput.files[0]
+        );
+
+    }else{
+
+        finishSave(
+            editKey
+            ? window.currentEditingImg || ""
+            : ""
+        );
+    }
+}
+
+function updateTeacherPoints(){
+    // Recalculate from actual questions in this section, so deletes cannot leave stale counts.
+    if(!currentEmail || !selectedSection) return Promise.resolve();
+    const sectionQuestionsRef = window.ref(window.db, `questions/${selectedSection}`);
+    return window.get(sectionQuestionsRef).then(snapshot=>{
+        const data = snapshot.val() || {};
+        let count = 0;
+        Object.values(data).forEach(subjectQuestions=>{
+            if(!subjectQuestions || typeof subjectQuestions !== "object") return;
+            Object.values(subjectQuestions).forEach(question=>{
+                if(question && question.teacherEmail === currentEmail) count++;
+            });
+        });
+        const scoreRef = window.ref(window.db, `teacherSectionScores/${selectedSection}/${currentEmail}`);
+        return window.set(scoreRef, {name: currentName || currentEmail, points: count});
+    }).catch(error=>{
+        console.error("تعذر تحديث مساهمات المعلم:", error);
+    });
+}
+
+function saveTeacherQuestion(
+    typeSub,
+    editKey=null
+){
+
+    let qText="";
+    let opt1="";
+    let opt2="";
+    let opt3="";
+    let opt4="";
+    let radiosName="";
+    let fileInputId="";
+    let ytInputId="";
+
+    qText =
+        document.getElementById(
+            `teacherQ_${typeSub}`
+        ).value.trim();
+
+    opt1 =
+        document.getElementById(
+            `teacherOpt1_${typeSub}`
+        ).value.trim();
+
+    opt2 =
+        document.getElementById(
+            `teacherOpt2_${typeSub}`
+        ).value.trim();
+
+    opt3 =
+        document.getElementById(
+            `teacherOpt3_${typeSub}`
+        ).value.trim();
+
+    opt4 =
+        document.getElementById(
+            `teacherOpt4_${typeSub}`
+        ).value.trim();
+
+    radiosName =
+        `correctAnswer_${typeSub}`;
+
+    fileInputId =
+        `teacherImg_${typeSub}`;
+
+    ytInputId =
+        `teacherYT_${typeSub}`;
+
+    const radios =
+        document.getElementsByName(
+            radiosName
+        );
+
+    let correctIndex =
+        -1;
+
+    for(
+        let i=0;
+        i<radios.length;
+        i++
+    ){
+
+        if(
+            radios[i].checked
+        ){
+
+            correctIndex =
+                i;
+
+            break;
+        }
+    }
+
+    if(!qText){
+
+        alert(
+            "الرجاء كتابة نص السؤال أولاً!"
+        );
+
+        return;
+    }
+
+    if(correctIndex === -1){
+
+        alert(
+            "الرجاء تحديد الخيار الصحيح!"
+        );
+
+        return;
+    }
+
+    const ytElement =
+        document.getElementById(
+            ytInputId
+        );
+
+    const ytUrl =
+        ytElement
+        ? ytElement.value.trim()
+        : "";
+
+    const requiredOptions = [opt1,opt2,opt3,opt4];
+    const missingOptionIndex = requiredOptions.findIndex(value => !String(value || "").trim());
+    if(missingOptionIndex !== -1){
+        alert(`فضلاً عبّئ جميع الخيارات أ، ب، ج، د. الخيار الناقص: ${["أ","ب","ج","د"][missingOptionIndex]}`);
+        return;
+    }
+
+    if(!editKey){
+
+        checkSimilarQuestions(
+            typeSub,
+            qText,
+            canProceed=>{
+
+                if(canProceed){
+
+                    processAndSaveQuestion(
+                        typeSub,
+                        qText,
+                        opt1,
+                        opt2,
+                        opt3,
+                        opt4,
+                        correctIndex,
+                        fileInputId,
+                        ytUrl
+                    );
+                }
+
+            }
+        );
+
+    }else{
+
+        processAndSaveQuestion(
+            typeSub,
+            qText,
+            opt1,
+            opt2,
+            opt3,
+            opt4,
+            correctIndex,
+            fileInputId,
+            ytUrl,
+            editKey
+        );
+    }
+}
+
+function deleteQuestionFromBank(subPath, qKey){
+    if(!confirm("هل أنت متأكد من حذف هذا السؤال من بنك الأسئلة؟")) return;
+    const qRef = window.ref(window.db, `questions/${selectedSection}/${subPath}/${qKey}`);
+    window.get(qRef).then(snapshot=>{
+        const question = snapshot.val();
+        if(!question){ alert("السؤال غير موجود أو سبق حذفه."); return false; }
+        return window.remove(qRef).then(()=>question);
+    }).then(question=>{
+        if(!question) return;
+        // Recompute the teacher's score from the remaining questions in this section.
+        return updateTeacherPoints().then(()=>{
+            alert("تم حذف السؤال وتحديث مساهمات المعلم في هذا القسم.");
+            loadTeacherView();
+        });
+    }).catch(error=>{
+        console.error("Delete question error:", error);
+        alert("تعذر حذف السؤال. تحقق من الاتصال والصلاحيات ثم حاول مجددًا.");
+    });
+}
+
+function editQuestionInBank(
+    subPath,
+    qKey,
+    qObj
+){
+
+    window.currentEditingImg =
+        qObj.image || "";
+
+    const qInput =
+        document.getElementById(
+            `teacherQ_${subPath}`
+        );
+
+    if(qInput){
+
+        qInput.value =
+            qObj.question || "";
+    }
+
+    if(qObj.options){
+
+        const ids = [
+
+            `teacherOpt1_${subPath}`,
+            `teacherOpt2_${subPath}`,
+            `teacherOpt3_${subPath}`,
+            `teacherOpt4_${subPath}`
+
+        ];
+
+        ids.forEach(
+            (id,index)=>{
+
+            const el =
+                document.getElementById(
+                    id
+                );
+
+            if(el){
+
+                el.value =
+                    qObj.options[index] || "";
+            }
+
+        });
+    }
+
+    if(qObj.youtube){
+
+        const yt =
+            document.getElementById(
+                `teacherYT_${subPath}`
+            );
+
+        if(yt){
+
+            yt.value =
+                qObj.youtube;
+        }
+    }
+
+    if(
+        qObj.correct !== undefined
+    ){
+
+        const radios =
+            document.getElementsByName(
+                `correctAnswer_${subPath}`
+            );
+
+        if(
+            radios[qObj.correct]
+        ){
+
+            radios[
+                qObj.correct
+            ].checked =
+                true;
+        }
+    }
+
+    window.currentEditingKey =
+        qKey;
+
+    window.currentEditingSub =
+        subPath;
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+    alert(
+        "قم بتعديل بيانات السؤال بالأعلى ثم اضغط على زر النشر."
+    );
+}
+
+/*
+==================================================
+مراكز الطلاب للمعلم
+==================================================
+*/
+
+function setupTeacherStudentRankings(){
+
+    const rankingsRef =
+        window.ref(
+            window.db,
+            `scores/${selectedSection}`
+        );
+
+    window.onValue(
+        rankingsRef,
+        snapshot=>{
+
+        const data =
+            snapshot.val() || {};
+
+        const list =
+            Object.keys(data)
+            .map(email=>{
+
+                const item =
+                    data[email];
+
+                if(
+                    item &&
+                    typeof item === "object"
+                ){
+
+                    return {
+
+                        email,
+
+                        name:
+                            item.name ||
+                            email,
+
+                        className:
+                            item.className ||
+                            "غير محدد",
+
+                        schoolSection: item.schoolSection || "",
+
+                        points:
+                            Number(
+                                item.points || 0
+                            ),
+
+                        correct:
+                            Number(
+                                item.correct || 0
+                            ),
+
+                        wrong:
+                            Number(
+                                item.wrong || 0
+                            )
+
+                    };
+                }
+
+                return {
+
+                    email,
+
+                    name:email,
+
+                    className:
+                        "غير محدد",
+
+                    points:
+                        Number(item || 0),
+
+                    correct:0,
+
+                    wrong:0
+
+                };
+
+            })
+            .filter(student => Number(student.correct || 0) + Number(student.wrong || 0) > 0)
+            .sort(
+                (a,b)=>
+                b.points-a.points
+            );
+
+        const container =
+            document.getElementById(
+                "teacherStudentRankingsList"
+            );
+
+        if(!container)
+            return;
+
+        if(list.length === 0){
+
+            container.innerHTML =
+                "<div class='rank-item'>لا توجد نتائج للطلاب حتى الآن.</div>";
+
+            return;
+        }
+
+        let html = "";
+
+        list.forEach(
+            (student,index)=>{
+
+            let medal = "";
+
+            if(index===0)
+                medal="🥇";
+
+            else if(index===1)
+                medal="🥈";
+
+            else if(index===2)
+                medal="🥉";
+
+            html += `
+
+                <div class="rank-item">
+
+                    <div style="font-weight:bold;">
+                        ${medal}
+                        المركز ${index+1}
+                    </div>
+
+                    <div>
+                        👤
+                        ${escapeHtml(
+                            student.name
+                        )}
+                    </div>
+
+                    <div>
+                        🎓 المرحلة/الصف: ${escapeHtml(student.className || "غير محدد")}
+                    </div>
+                    <div>
+                        🏫 الفصل: ${escapeHtml(student.schoolSection || "غير محدد")}
+                    </div>
+
+                    <div class="student-stats">
+
+                        <div class="stat-mini">
+
+                            ⭐ النقاط
+
+                            <br>
+
+                            <b>
+                                ${student.points}
+                            </b>
+
+                        </div>
+
+                        <div class="stat-mini stat-correct">
+
+                            ✅ الصح
+
+                            <br>
+
+                            ${student.correct}
+
+                        </div>
+
+                        <div class="stat-mini stat-wrong">
+
+                            ❌ الخطأ
+
+                            <br>
+
+                            ${student.wrong}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+        });
+
+        container.innerHTML =
+            html;
+
+    });
+}
+
+function setupTeacherContributions(){
+    // Combined, read-only contributions board across all site sections.
+    // It reads the existing question banks and does not modify the database.
+    const sections = ["قدرات", "تحصيلي", "إدارة أعمال"];
+    const listContainer = document.getElementById("teacherContributionsList");
+    if(!listContainer) return;
+    listContainer.innerHTML = "<div class='rank-item'>جاري تحميل المساهمات...</div>";
+
+    const sectionData = {};
+    // Wait until every section has returned its first snapshot before rendering.
+    // This prevents a temporary partial board (for example, abilities only)
+    // from flashing before the combined totals appear.
+    const loadedSections = new Set();
+    const renderCombinedBoard = () => {
+        if(loadedSections.size < sections.length) return;
+        const teachers = {};
+        sections.forEach(section=>{
+            const tree = sectionData[section] || {};
+            Object.values(tree).forEach(subjectQuestions=>{
+                if(!subjectQuestions || typeof subjectQuestions !== "object") return;
+                Object.values(subjectQuestions).forEach(question=>{
+                    if(!question || !question.teacherEmail) return;
+                    const email = question.teacherEmail;
+                    if(!teachers[email]) teachers[email] = {name:question.teacherName || email, total:0, bySection:{}};
+                    teachers[email].name = question.teacherName || teachers[email].name;
+                    teachers[email].total += 1;
+                    teachers[email].bySection[section] = (teachers[email].bySection[section] || 0) + 1;
+                });
+            });
+        });
+        const sorted = Object.values(teachers).sort((a,b)=>b.total-a.total || a.name.localeCompare(b.name, "ar"));
+        if(!sorted.length){
+            listContainer.innerHTML = "<div class='rank-item'>لا توجد مساهمات في بنك الأسئلة حتى الآن.</div>";
+            return;
+        }
+        listContainer.innerHTML = sorted.map((teacher,index)=>{
+            const breakdown = sections.filter(section=>teacher.bySection[section]).map(section=>
+                `${escapeHtml(section)}: ${teacher.bySection[section]}`
+            ).join(" — ");
+            return `<div class="rank-item">${index+1}. ${escapeHtml(teacher.name)} : <b>${teacher.total}</b> سؤال إجمالي${breakdown ? `<div style="font-size:13px;margin-top:4px;color:#155e75">${breakdown}</div>` : ""}</div>`;
+        }).join("");
+    };
+
+    sections.forEach(section=>{
+        window.onValue(window.ref(window.db, `questions/${section}`), snapshot=>{
+            sectionData[section] = snapshot.val() || {};
+            loadedSections.add(section);
+            renderCombinedBoard();
+        }, error=>{
+            console.error(`تعذر تحميل مساهمات قسم ${section}:`, error);
+            // Mark failed sections as settled so the board can still show the
+            // sections that loaded successfully instead of staying on loading.
+            sectionData[section] = sectionData[section] || {};
+            loadedSections.add(section);
+            renderCombinedBoard();
+        });
+    });
+}
+
+function setupTeacherOwnQuestionBank(){
+
+    const bankContainer =
+        document.getElementById(
+            "teacherQuestionBankList"
+        );
+
+    if(!bankContainer)
+        return;
+
+    const allQRef =
+        window.ref(
+            window.db,
+            `questions/${selectedSection}`
+        );
+
+    window.onValue(
+        allQRef,
+        snapshot=>{
+
+        const subSectionsData =
+            snapshot.val();
+
+        if(!subSectionsData){
+
+            bankContainer.innerHTML =
+                "<div style='font-size:14px;color:#6b7280;padding:10px;'>لا توجد أسئلة مسجلة في البنك حالياً</div>";
+
+            return;
+        }
+
+        bankContainer.innerHTML =
+            "";
+
+        let ownQuestionsCount =
+            0;
+
+        Object.keys(
+            subSectionsData
+        )
+        .forEach(subKey=>{
+
+            const qList =
+                subSectionsData[subKey];
+
+            if(!qList)
+                return;
+
+            Object.keys(
+                qList
+            )
+            .forEach(qKey=>{
+
+                const qObj =
+                    qList[qKey];
+
+                if(
+                    qObj.teacherEmail !==
+                    currentEmail
+                ){
+                    return;
+                }
+
+                ownQuestionsCount++;
+
+                const itemDiv =
+                    document.createElement(
+                        "div"
+                    );
+
+                itemDiv.className =
+                    "bank-question-box";
+
+                itemDiv.innerHTML = `
+
+                    <div style="
+                        font-weight:bold;
+                        font-size:14px;
+                        margin-bottom:5px;
+                        color:#1f2937;
+                    ">
+
+                        [${escapeHtml(
+                            getSubTitle(subKey)
+                        )}]
+
+                        ${escapeHtml(
+                            qObj.question
+                        )}
+
+                    </div>
+
+                    <div style="
+                        font-size:12px;
+                        color:#4b5563;
+                        margin-bottom:8px;
+                    ">
+
+                        بواسطة: أنت
+
+                    </div>
+
+                    <div>
+
+                        <button
+                            class="bank-btn bank-btn-edit"
+                            onclick='editQuestionInBank(
+                                ${JSON.stringify(subKey)},
+                                ${JSON.stringify(qKey)},
+                                ${JSON.stringify(qObj)}
+                            )'
+                        >
+                            تعديل
+                        </button>
+
+                        <button
+                            class="bank-btn"
+                            onclick='deleteQuestionFromBank(
+                                ${JSON.stringify(subKey)},
+                                ${JSON.stringify(qKey)}
+                            )'
+                        >
+                            حذف
+                        </button>
+
+                    </div>
+
+                `;
+
+                bankContainer.appendChild(
+                    itemDiv
+                );
+
+            });
+
+        });
+
+        if(
+            ownQuestionsCount === 0
+        ){
+
+            bankContainer.innerHTML =
+                "<div style='font-size:14px;color:#6b7280;padding:10px;'>لا توجد أسئلة قمت بإضافتها في هذا القسم.</div>";
+        }
+
+    });
+}
+
+function getSubjectsForSection(section){
+    if(section === "إدارة أعمال") return [
+        {id:"arabic",name:"📚 اللغة العربية"},
+        {id:"religion",name:"🕌 الدين"},
+        {id:"socialStudies",name:"🌍 الدراسات الاجتماعية (التاريخ والجغرافيا)"},
+        {id:"digitalSkills",name:"💻 المهارات الرقمية"},
+        {id:"lawPrinciples",name:"⚖️ مبادئ القانون"}
+    ];
+    return [
+        {id:"chemistry",name:"🧪 كيمياء"},
+        {id:"physics",name:"⚡ فيزياء"},
+        {id:"math",name:"📐 رياضيات"},
+        {id:"biology",name:"🧬 أحياء"}
+    ];
+}
+
+function loadStudentView(){
+
+    const wrapper =
+        document.getElementById(
+            "studentQuestionsSectionWrapper"
+        );
+
+    wrapper.innerHTML =
+        "";
+
+    document.getElementById(
+        "studentNameDisplay"
+    ).innerText =
+        currentName;
+
+    document.getElementById(
+        "studentClassInput"
+    ).value =
+        currentClass || "";
+
+    document.getElementById("studentSchoolSectionInput").value = currentSchoolSection || "";
+
+    document.getElementById(
+        "studentSectionDisplay"
+    ).innerText =
+        selectedSection;
+
+    if(
+        selectedSection === "قدرات"
+    ){
+
+        const quantBox =
+            document.createElement(
+                "div"
+            );
+
+        quantBox.className =
+            "cyan-box full-cyan";
+
+        quantBox.innerHTML = `
+
+            <div class="box-title">
+                📊 أسئلة كمي
+            </div>
+
+            <div id="studentQuantContainer">
+            </div>
+
+        `;
+
+        wrapper.appendChild(
+            quantBox
+        );
+
+        const verbalBox =
+            document.createElement(
+                "div"
+            );
+
+        verbalBox.className =
+            "cyan-box full-cyan";
+
+        verbalBox.innerHTML = `
+
+            <div class="box-title">
+                📖 أسئلة لفظي
+            </div>
+
+            <div id="studentVerbalContainer">
+            </div>
+
+        `;
+
+        wrapper.appendChild(
+            verbalBox
+        );
+
+        renderQuestionsFromFirebase(
+            "quantitative",
+            document.getElementById(
+                "studentQuantContainer"
+            )
+        );
+
+        renderQuestionsFromFirebase(
+            "verbal",
+            document.getElementById(
+                "studentVerbalContainer"
+            )
+        );
+
+    }else{
+
+        const subjects = getSubjectsForSection(selectedSection);
+
+        subjects.forEach(
+            sub=>{
+
+            const box =
+                document.createElement(
+                    "div"
+                );
+
+            box.className =
+                "cyan-box full-cyan";
+
+            box.innerHTML = `
+
+                <div class="box-title">
+                    ${sub.name}
+                </div>
+
+                <div id="student_${sub.id}_Container">
+                </div>
+
+            `;
+
+            wrapper.appendChild(
+                box
+            );
+
+            renderQuestionsFromFirebase(
+                sub.id,
+                document.getElementById(
+                    `student_${sub.id}_Container`
+                )
+            );
+
+        });
+    }
+
+    const savedEmoji =
+        localStorage.getItem(
+            "sabiq_emoji"
+        );
+
+    if(savedEmoji){
+
+        document
+            .querySelectorAll(
+                ".emoji-item"
+            )
+            .forEach(el=>{
+
+            if(
+                el.innerText ===
+                savedEmoji
+            ){
+
+                el.classList.add(
+                    "selected"
+                );
+            }
+
+        });
+    }
+
+    setupRankingsListener();
+}
+
+function teacherQuestionForm(
+    id,
+    title,
+    buttonText
+){
+
+    return `
+
+        <div style="
+            width:100%;
+            text-align:right;
+            margin-bottom:5px;
+            font-weight:bold;
+            font-size:15px;
+            color:#374151;
+        ">
+            ${title}
+        </div>
+
+        <textarea
+            class="teacher-textarea"
+            id="teacherQ_${id}"
+            rows="2"
+            placeholder="اكتب نص السؤال..."
+        ></textarea>
+
+        <div class="image-upload-row">
+
+            <span>
+                إرفاق صورة/معادلة:
+            </span>
+
+            <input
+                type="file"
+                id="teacherImg_${id}"
+                accept="image/*"
+            >
+
+        </div>
+
+        <div class="teacher-input-row">
+
+            <input
+                type="text"
+                class="teacher-input"
+                id="teacherYT_${id}"
+                placeholder="رابط فيديو يوتيوب لشرح السؤال (اختياري)..."
+                style="width:100%;margin-bottom:5px;"
+            >
+
+        </div>
+
+        <div class="teacher-input-row">
+
+            <input
+                type="radio"
+                name="correctAnswer_${id}"
+                class="correct-radio"
+                value="0"
+            >
+
+            <input
+                type="text"
+                class="teacher-input"
+                id="teacherOpt1_${id}"
+                placeholder="الخيار الأول (أ)"
+            >
+
+        </div>
+
+        <div class="teacher-input-row">
+
+            <input
+                type="radio"
+                name="correctAnswer_${id}"
+                class="correct-radio"
+                value="1"
+            >
+
+            <input
+                type="text"
+                class="teacher-input"
+                id="teacherOpt2_${id}"
+                placeholder="الخيار الثاني (ب)"
+            >
+
+        </div>
+
+        <div class="teacher-input-row">
+
+            <input
+                type="radio"
+                name="correctAnswer_${id}"
+                class="correct-radio"
+                value="2"
+            >
+
+            <input
+                type="text"
+                class="teacher-input"
+                id="teacherOpt3_${id}"
+                placeholder="الخيار الثالث (ج)"
+            >
+
+        </div>
+
+        <div class="teacher-input-row">
+
+            <input
+                type="radio"
+                name="correctAnswer_${id}"
+                class="correct-radio"
+                value="3"
+            >
+
+            <input
+                type="text"
+                class="teacher-input"
+                id="teacherOpt4_${id}"
+                placeholder="الخيار الرابع (د)"
+            >
+
+        </div>
+
+        <button
+            class="action-btn"
+            style="
+                background-color:#a5f3fc;
+                width:100%;
+                margin-bottom:20px;
+                box-shadow:none;
+            "
+            onclick="saveTeacherQuestion('${id}')"
+        >
+            ${buttonText}
+        </button>
+
+    `;
+}
+
+function loadTeacherView(){
+
+    const container =
+        document.getElementById(
+            "teacherFormsContainer"
+        );
+
+    container.innerHTML =
+        "";
+
+    window.currentEditingKey =
+        null;
+
+    window.currentEditingSub =
+        null;
+
+    window.currentEditingImg =
+        "";
+
+    if(
+        selectedSection === "قدرات"
+    ){
+
+        container.innerHTML +=
+            teacherQuestionForm(
+                "quantitative",
+                "أضف سؤال كمي لقسم قدرات",
+                "نشر السؤال الكمي للبنك"
+            );
+
+        container.innerHTML +=
+            teacherQuestionForm(
+                "verbal",
+                "أضف سؤال لفظي لقسم قدرات",
+                "نشر السؤال اللفظي للبنك"
+            );
+
+    }else{
+
+        const subjects = getSubjectsForSection(selectedSection);
+
+        subjects.forEach(
+            sub=>{
+
+            container.innerHTML +=
+                teacherQuestionForm(
+                    sub.id,
+                    `أضف سؤال لقسم التحصيلي - ${sub.name}`,
+                    `نشر السؤال (${sub.name}) للبنك`
+                );
+
+        });
+    }
+
+    setupTeacherContributions();
+
+    setupTeacherStudentRankings();
+
+    setupTeacherOwnQuestionBank();
+}
+
+function openPasswordRecovery(){
+    const overlay=document.getElementById("passwordRecoveryOverlay");
+    const result=document.getElementById("recoveryResult");
+    if(result) result.textContent="";
+    const emailInput=document.getElementById("recoveryEmailInput");
+    if(emailInput) emailInput.value=(document.getElementById("loginEmailInput")?.value || "").trim();
+    overlay.classList.add("open");
+}
+function closePasswordRecovery(){document.getElementById("passwordRecoveryOverlay").classList.remove("open");}
+function searchRecoveryAccount(){
+    const email=document.getElementById("recoveryEmailInput").value.trim();
+    const result=document.getElementById("recoveryResult");
+    if(!email){result.textContent="فضلاً أدخل البريد الإلكتروني.";return;}
+    const key=email.replace(/[.#$\/\[\]]/g,"_");
+    result.textContent="جاري البحث عن الحساب...";
+    Promise.all([
+        window.get(window.ref(window.db,`users/student/${key}`)),
+        window.get(window.ref(window.db,`users/teacher/${key}`))
+    ]).then(([student,teacher])=>{
+        if(student.exists() || teacher.exists()){
+            result.textContent="تم العثور على الحساب. لا يمكن عرض كلمة المرور الحالية بأمان؛ إذا نسيتها، يلزم إعداد آلية إعادة تعيين آمنة عبر نظام المصادقة المستخدم في المشروع.";
+        }else result.textContent="لم نعثر على حساب بهذا البريد الإلكتروني. تأكد من كتابة البريد المسجل.";
+    }).catch(err=>{console.error(err);result.textContent="تعذر البحث. تحقق من الاتصال والصلاحيات وحاول مجددًا.";});
+}
+
+function logout(){
+
+    localStorage.removeItem(
+        "sabiq_saved_role"
+    );
+
+    currentName =
+        "";
+
+    currentEmail =
+        "";
+
+    userRole =
+        "";
+
+    selectedSection =
+        "";
+
+    currentClass =
+        "";
+    currentSchoolSection = "";
+
+    document.getElementById(
+        "loginPassInput"
+    ).value =
+        "";
+
+    showScreen(
+        "screen-login"
+    );
+}
+
+</script>
+
+
+<div id="passwordRecoveryOverlay" class="recovery-overlay" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle" onclick="if(event.target===this)closePasswordRecovery()">
+  <div class="recovery-modal">
+    <div id="recoveryTitle" class="screen-title" style="margin-bottom:8px">استعادة كلمة المرور</div>
+    <p style="font-size:14px;line-height:1.8;color:#374151;margin:0">أدخل البريد الإلكتروني المسجل للبحث عن الحساب.</p>
+    <input id="recoveryEmailInput" class="input-box" type="email" placeholder="البريد الإلكتروني المسجل" autocomplete="email">
+    <div id="recoveryResult" role="status" style="font-size:14px;line-height:1.8;margin:8px 0 14px;color:#155e75"></div>
+    <div class="recovery-actions">
+      <button type="button" class="action-btn" onclick="searchRecoveryAccount()">بحث</button>
+      <button type="button" class="action-btn" style="background:#e5e7eb" onclick="closePasswordRecovery()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
